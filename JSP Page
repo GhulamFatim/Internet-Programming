@@ -1,0 +1,47 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Drink Selection</title>
+</head>
+<body>
+    <h1>Select a Drink</h1>
+    <form action="order.jsp" method="post">
+        <select name="selectedDrink">
+            <%
+                try {
+                    // Load the JDBC driver and establish a connection to the database
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String url = "jdbc:mysql://localhost:3306/Database";
+                    String username = "your_username";
+                    String password = "your_password";
+                    Connection connection = DriverManager.getConnection(url, username, password);
+                    
+                    // Execute a SQL query to retrieve drink names and rates
+                    String sql = "SELECT drinkName, rate FROM beverages";
+                    Statement statement = connection.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql);
+                    
+                    // Iterate through the results and populate the dropdown list
+                    while (resultSet.next()) {
+                        String drinkName = resultSet.getString("drinkName");
+                        int rate = resultSet.getInt("rate");
+            %>
+            <option value="<%= drinkName %>"><%= drinkName %> - $<%= rate %></option>
+            <%
+                    }
+                    
+                    // Close database resources
+                    resultSet.close();
+                    statement.close();
+                    connection.close();
+                } catch (Exception e) {
+                    out.println("An error occurred: " + e.getMessage());
+                }
+            %>
+        </select>
+        <input type="submit" value="Order">
+    </form>
+</body>
+</html>
