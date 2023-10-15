@@ -1,0 +1,35 @@
+public class MySpecialNumberException extends Exception {
+    public MySpecialNumberException(String message) {
+        super(message);
+    }
+}
+public class MyFunction {
+    public void myfunc(int x) throws MySpecialNumberException {
+        if (x == 10) {
+            throw new MySpecialNumberException("Input is 10. This is not allowed.");
+        } else if (x == 20) {
+            throw new MySpecialNumberException("Input is 20. This is not allowed.");
+        } else if (x == 30) {
+            throw new MySpecialNumberException("Input is 30. This is not allowed.");
+        } else {
+            System.out.println("Input is: " + x);
+        }
+    }
+}
+public class Caller {
+    public static void main(String[] args) {
+        MyFunction myFunction = new MyFunction();
+
+        int[] inputs = {5, 10, 15, 20, 30};
+
+        for (int input : inputs) {
+            try {
+                myFunction.myfunc(input);
+            } catch (MySpecialNumberException e) {
+                System.out.println("Caught MySpecialNumberException: " + e.getMessage());
+            } finally {
+                System.out.println("Finished processing input: " + input);
+            }
+        }
+    }
+}
