@@ -1,0 +1,129 @@
+import java.util.Date;
+
+public abstract class Shape {
+    private static int shapeCount = 0;
+    private int shapeID;
+    private Date creationTimestamp;
+
+    public Shape() {
+        this.shapeID = ++shapeCount;
+        this.creationTimestamp = new Date();
+    }
+
+    public int getShapeID() {
+        return shapeID;
+    }
+
+    public Date getCreationTimestamp() {
+        return creationTimestamp;
+    }
+
+    public abstract double calculateArea();
+
+    public abstract String draw();
+
+    @Override
+    public String toString() {
+        return "Shape [ID: " + shapeID + ", Created at: " + creationTimestamp + "]";
+    }
+}
+public class Square extends Shape {
+    private double sideLength;
+
+    public Square(double sideLength) {
+        super();
+        this.sideLength = sideLength;
+    }
+
+    @Override
+    public double calculateArea() {
+        return sideLength * sideLength;
+    }
+
+    @Override
+    public String draw() {
+        return "Drawing a Square";
+    }
+}
+public class Rectangle extends Shape {
+    private double length;
+    private double width;
+
+    public Rectangle(double length, double width) {
+        super();
+        this.length = length;
+        this.width = width;
+    }
+
+    @Override
+    public double calculateArea() {
+        return length * width;
+    }
+
+    @Override
+    public String draw() {
+        return "Drawing a Rectangle";
+    }
+}
+public class Triangle extends Shape {
+    private double base;
+    private double height;
+
+    public Triangle(double base, double height) {
+        super();
+        this.base = base;
+        this.height = height;
+    }
+
+    @Override
+    public double calculateArea() {
+        return 0.5 * base * height;
+    }
+
+    @Override
+    public String draw() {
+        return "Drawing a Triangle";
+    }
+}
+public class ShapeLinkedList {
+    private LinkedListNode head;
+    private int size;
+
+    public ShapeLinkedList() {
+        head = null;
+        size = 0;
+    }
+
+    public void addShape(Shape shape) {
+        LinkedListNode newNode = new LinkedListNode(shape);
+        if (head == null) {
+            head = newNode;
+        } else {
+            LinkedListNode current = head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = newNode;
+        }
+        size++;
+    }
+
+    public int getSize() {
+        return size;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        ShapeLinkedList shapeList = new ShapeLinkedList();
+
+        Square square = new Square(5.0);
+        Rectangle rectangle = new Rectangle(4.0, 6.0);
+        Triangle triangle = new Triangle(3.0, 4.0);
+
+        shapeList.addShape(square);
+        shapeList.addShape(rectangle);
+        shapeList.addShape(triangle);
+
+        System.out.println("Number of shapes in the list: " + shapeList.getSize());
+    }
+}
