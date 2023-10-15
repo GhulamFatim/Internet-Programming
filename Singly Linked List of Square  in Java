@@ -1,0 +1,107 @@
+import java.util.Date;
+
+public class Square {
+    private double sideLength;
+    private double area;
+    private Date creationTimestamp;
+
+    // Parameterized constructor
+    public Square(double sideLength) {
+        this.sideLength = sideLength;
+        this.area = calculateArea();
+        this.creationTimestamp = new Date();
+    }
+
+    // Non-parameterized constructor
+    public Square() {
+        this.sideLength = 0.0; // Default side length
+        this.area = calculateArea();
+        this.creationTimestamp = new Date();
+    }
+
+    // Getters and Setters
+    public double getSideLength() {
+        return sideLength;
+    }
+
+    public void setSideLength(double sideLength) {
+        this.sideLength = sideLength;
+        this.area = calculateArea();
+    }
+
+    public double getArea() {
+        return area;
+    }
+
+    public Date getCreationTimestamp() {
+        return creationTimestamp;
+    }
+
+    // Calculate the area of the square
+    private double calculateArea() {
+        return sideLength * sideLength;
+    }
+
+    @Override
+    public String toString() {
+        return "Square [Side Length: " + sideLength + ", Area: " + area + ", Creation Timestamp: " + creationTimestamp + "]";
+    }
+}
+public class LinkedListNode {
+    public Square square;
+    public LinkedListNode next;
+
+    public LinkedListNode(Square square) {
+        this.square = square;
+        this.next = null;
+    }
+}
+public class SquareLinkedList {
+    private LinkedListNode head;
+    private int size;
+
+    public SquareLinkedList() {
+        head = null;
+        size = 0;
+    }
+
+    public void addSquare(Square square) {
+        LinkedListNode newNode = new LinkedListNode(square);
+        if (head == null) {
+            head = newNode;
+        } else {
+            LinkedListNode current = head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = newNode;
+        }
+        size++;
+    }
+
+    // Add other methods for linked list operations if needed
+
+    public int getSize() {
+        return size;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        SquareLinkedList squareList = new SquareLinkedList();
+
+        // Create and add squares to the list
+        Square square1 = new Square(4.0);
+        squareList.addSquare(square1);
+        Square square2 = new Square(5.0);
+        squareList.addSquare(square2);
+
+        System.out.println("Number of squares in the list: " + squareList.getSize());
+
+        // Display the squares and their information
+        LinkedListNode current = squareList.head;
+        while (current != null) {
+            System.out.println(current.square);
+            current = current.next;
+        }
+    }
+}
