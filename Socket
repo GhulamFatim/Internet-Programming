@@ -1,0 +1,101 @@
+import java.io.Serializable;
+
+public class StringCountRequest implements Serializable {
+    private String inputString;
+
+    public StringCountRequest(String inputString) {
+        this.inputString = inputString;
+    }
+
+    public String getInputString() {
+        return inputString;
+    }
+}
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class CharacterCountResponse implements Serializable {
+    private Map<Character, Integer> characterCountMap;
+
+    public CharacterCountResponse(Map<Character, Integer> characterCountMap) {
+        this.characterCountMap = characterCountMap;
+    }
+
+    public Map<Character, Integer> getCharacterCountMap() {
+        return characterCountMap;
+    }
+}
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Server {
+    public static void main(String[] args) {
+        final int PORT = 12345;
+
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Server is running and waiting for client connections...");
+
+            while (true) {
+                try (Socket clientSocket = serverSocket.accept();
+                     ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
+                     ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream())) {
+
+                    StringCountRequest request = (StringCountRequest) inputStream.readObject();
+                    String inputString = request.getInputString();
+
+                    Map<Character, Integer> characterCountMap = countCharacters(inputString);
+
+                    CharacterCountResponse response = new CharacterCountResponse(characterCountMap);
+                    outputStream.writeObject(response);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Map<Character, Integer> countCharacters(String inputString) {
+        Map<Character, Integer> characterCountMap = new HashMap<>();
+        inputString = inputString.replaceAll("[^a-zA-Z]", ""); // Remove non-alphabet characters
+
+        for (char c : inputString.toCharArray()) {
+            characterCountMap.put(c, characterCountMap.getOrDefault(c, 0) + 1);
+        }
+
+        return characterCountMap;
+    }
+}
+import java.io.*;
+import java.net.Socket;
+
+public class Client {
+    public static void main(String[] args) {
+        final String SERVER_IP = "localhost";
+        final int SERVER_PORT = 12345;
+
+        try (Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream())) {
+
+            String inputString = "Hello, Ali! How are you?";
+
+            StringCountRequest request = new StringCountRequest(inputString);
+            outputStream.writeObject(request);
+
+            CharacterCountResponse response = (CharacterCountResponse) inputStream.readObject();
+
+            System.out.println("Server response:");
+            for (Map.Entry<Character, Integer> entry : response.getCharacterCountMap().entrySet()) {
+                System.out.println(entry.getKey() + ":" + entry.getValue());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
